@@ -7,8 +7,15 @@ mongoose.connect("mongodb://localhost:27017/fruitsDB").then(() => console.log('C
 
 //Creates the schema for fruits
 const fruitSchema = new mongoose.Schema({
-    name: String,
-    rating: Number,
+    name: {
+        type:String,
+        required: true
+    },
+    rating: {
+        type: Number,
+        min:1,
+        max:10
+        },
     review: String
 })
 
@@ -18,7 +25,7 @@ const Fruit = mongoose.model("Fruit", fruitSchema);
 //Creates a new fruit using fruitsSchema and adds it to Fruit(s) collection
 const fruit = new Fruit({
     name:"Apple",
-    rating: 7,
+    rating: 10,
     review: "Pretty solid as a fruit."
 })
 //Saves the fruit record we created (commented out since it will save everyu time we run the file)
@@ -57,3 +64,54 @@ const orange = new Fruit({
 
 //Inser all the fruits created above using a model function 
 //Fruit.insertMany([kiwi,banana,orange]);
+
+const retrieve = async () => {
+    const repo = await Fruit.find({})
+    repo.forEach((e)=>{
+        console.log(e.name) 
+    })
+    console.log(repo) 
+    mongoose.connection.close().then(console.log("closed connection"))
+
+    
+  };
+  //retrieve()
+
+
+
+const updatePerson= async() =>{
+    await Person.updateOne({name:"John"},{age:23})
+    console.log("Updated record")
+    mongoose.connection.close().then(console.log("closed connection"))
+
+}
+
+//updatePerson()
+
+//Deletes a single fruit filtering on name field
+const deleteFruit = async(fruitName)=>{
+    try{
+        await Fruit.deleteOne({ name: fruitName });
+        console.log("Deleted a "+fruitName)
+    }catch(err){
+        console.log(err)
+    }
+
+    mongoose.connection.close().then(console.log("closed connection"));
+
+}
+
+//Deletes a single fruit filtering on name field
+const deleteManyFruit = async(fruitName)=>{
+    try{
+        await Fruit.deleteMany({ name: fruitName });
+        console.log("Deleted a "+fruitName)
+    }catch(err){
+        console.log(err)
+    }
+
+    mongoose.connection.close().then(console.log("closed connection"));
+
+}
+
+//deleteFruit("hola")
